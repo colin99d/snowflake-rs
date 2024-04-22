@@ -7,6 +7,7 @@ pub struct ExecRequest {
     pub async_exec: bool,
     pub sequence_id: u64,
     pub is_internal: bool,
+    pub query_submission_time: u64,
 }
 
 #[derive(Serialize, Debug)]

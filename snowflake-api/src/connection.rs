@@ -158,11 +158,18 @@ impl Connection {
         );
         if let Some(auth) = auth {
             let mut auth_val = HeaderValue::from_str(auth)?;
-            auth_val.set_sensitive(true);
+            // auth_val.set_sensitive(true);
             headers.append(header::AUTHORIZATION, auth_val);
         }
+        headers.append("cache-control", HeaderValue::from_static("no-cache"));
+        headers.append("Content-Type", HeaderValue::from_static("application/json"));
 
         // todo: persist client to use connection polling
+        println!("\nUrl: {url}");
+        println!("Headers: {:?}", headers);
+        let msg = serde_json::to_string(&body).unwrap();
+        println!("Body: {:?}", msg);
+
         let resp = self
             .client
             .post(url)

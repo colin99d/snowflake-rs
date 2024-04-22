@@ -495,6 +495,7 @@ impl SnowflakeApi {
             async_exec: false,
             sequence_id: parts.sequence_id,
             is_internal: false,
+            query_submission_time: 1713805701286
         };
 
         let resp = self
