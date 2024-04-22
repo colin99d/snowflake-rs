@@ -1,4 +1,5 @@
 use serde::Serialize;
+use std::collections::HashMap;
 
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -8,6 +9,8 @@ pub struct ExecRequest {
     pub sequence_id: u64,
     pub is_internal: bool,
     pub query_submission_time: u64,
+    pub parameters: HashMap<String, String>,
+    pub queryContextDTO: HashMap<String, String>,
 }
 
 #[derive(Serialize, Debug)]

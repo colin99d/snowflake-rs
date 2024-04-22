@@ -35,6 +35,7 @@ use crate::connection::{Connection, ConnectionError};
 use crate::requests::ExecRequest;
 use crate::responses::{ExecResponseRowType, SnowflakeType};
 use crate::session::AuthError::MissingEnvArgument;
+use std::collections::HashMap;
 
 pub mod connection;
 #[cfg(feature = "polars")]
@@ -495,7 +496,9 @@ impl SnowflakeApi {
             async_exec: false,
             sequence_id: parts.sequence_id,
             is_internal: false,
-            query_submission_time: 1713805701286
+            query_submission_time: 1713805701286,
+            parameters: HashMap::new(),
+            queryContextDTO: HashMap::new()
         };
 
         let resp = self

@@ -145,10 +145,12 @@ impl Connection {
         get_params.extend_from_slice(extra_get_params);
 
         let url = format!(
-            "https://{}.snowflakecomputing.com/{}",
+            "https://{}.snowflakecomputing.com:443/{}",
             &account_identifier, context.path
         );
-        let url = Url::parse_with_params(&url, get_params)?;
+        let mut replaced: Vec<(&str, &str)> = Vec::new();
+        replaced.push(("requestId", request_id.as_str()));
+        let url = Url::parse_with_params(&url, replaced)?;
 
         let mut headers = HeaderMap::new();
 
@@ -163,12 +165,14 @@ impl Connection {
         }
         headers.append("cache-control", HeaderValue::from_static("no-cache"));
         headers.append("Content-Type", HeaderValue::from_static("application/json"));
+        headers.append("User-Agent", HeaderValue::from_static("PythonConnector/3.6.0 (Windows-10-10.0.19045-SP0) CPython/3.10.5"));
 
         // todo: persist client to use connection polling
         println!("\nUrl: {url}");
         println!("Headers: {:?}", headers);
         let msg = serde_json::to_string(&body).unwrap();
         println!("Body: {:?}", msg);
+        // "https://vgb27558.us-east-1.snowflakecomputing.com:443"
 
         let resp = self
             .client
