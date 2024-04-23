@@ -148,9 +148,7 @@ impl Connection {
             "https://{}.snowflakecomputing.com:443/{}",
             &account_identifier, context.path
         );
-        let mut replaced: Vec<(&str, &str)> = Vec::new();
-        replaced.push(("requestId", request_id.as_str()));
-        let url = Url::parse_with_params(&url, replaced)?;
+        let url = Url::parse_with_params(&url, get_params)?;
 
         let mut headers = HeaderMap::new();
 
@@ -163,9 +161,9 @@ impl Connection {
             // auth_val.set_sensitive(true);
             headers.append(header::AUTHORIZATION, auth_val);
         }
-        headers.append("cache-control", HeaderValue::from_static("no-cache"));
-        headers.append("Content-Type", HeaderValue::from_static("application/json"));
-        headers.append("User-Agent", HeaderValue::from_static("PythonConnector/3.6.0 (Windows-10-10.0.19045-SP0) CPython/3.10.5"));
+        // headers.append("cache-control", HeaderValue::from_static("no-cache"));
+        // headers.append("Content-Type", HeaderValue::from_static("application/json"));
+        // headers.append("User-Agent", HeaderValue::from_static("PythonConnector/3.6.0 (Windows-10-10.0.19045-SP0) CPython/3.10.5"));
 
         // todo: persist client to use connection polling
         println!("\nUrl: {url}");
@@ -182,7 +180,12 @@ impl Connection {
             .send()
             .await?;
 
-        Ok(resp.json::<R>().await?)
+        let text = resp.text().await.unwrap();
+        println!("{text}");
+        use std::fs;
+        fs::write("/tmp/some_data.txt", text.clone()).unwrap();
+        let v: R = serde_json::from_str(&text)?;
+        Ok(v)
     }
 
     pub async fn get_chunk(
